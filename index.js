@@ -5,35 +5,23 @@ var bodyParser = require('body-parser');
 var request = require('request');
 var app = express();
 
+app.use(bodyParser.urlencoded({extended: false}));
+app.use(bodyParser.json());
+app.listen((process.env.PORT || 3000));
 
-
-
-// Process application/x-www-form-urlencoded
-app.use(bodyParser.urlencoded({extended: false}))
-
-// Process application/json
-app.use(bodyParser.json())
-
-app.listen((process.env.PORT || 80));
-
-
-// Index route
+// Server frontpage
 app.get('/', function (req, res) {
-    res.send('Hello world, I am a chat bot, updating')
-})
+    res.send('This is TestBot Server');
+});
 
-// for Facebook verification
+// Facebook Webhook
 app.get('/webhook', function (req, res) {
-    if (req.query['hub.verify_token'] === 'my_voice_is_my_password_verify_me') {
-        res.send(req.query['hub.challenge'])
+    if (req.query['hub.verify_token'] === 'testbot_verify_token') {
+        res.send(req.query['hub.challenge']);
+    } else {
+        res.send('Invalid verify token');
     }
-    res.send('Error, wrong token')
-})
-
-// Spin up the server
-app.listen(app.get('port'), function() {
-    console.log('running on port', app.get('port'))
-})
+});
 
 // handler receiving messages
 app.post('/webhook', function (req, res) {
